@@ -1,0 +1,9 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+ARBOLpy/ARBOLpy.egg-info/PKG-INFO
+ARBOLpy/ARBOLpy.egg-info/SOURCES.txt
+ARBOLpy/ARBOLpy.egg-info/dependency_links.txt
+ARBOLpy/ARBOLpy.egg-info/requires.txt
+ARBOLpy/ARBOLpy.egg-info/top_level.txt

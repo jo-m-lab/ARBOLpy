@@ -1,3 +1,20 @@
+Metadata-Version: 2.1
+Name: ARBOLpy
+Version: 0.0.1
+Summary: python implementation of ARBOL scRNAseq iterative tiered clustering https://github.com/jo-m-lab/ARBOL
+Home-page: https://github.com/jo-m-lab/ARBOLpy
+Author: Kyle Kimler, Ruben van Esch
+Author-email: kylejkimler@gmail.com
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/jo-m-lab/ARBOLpy/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # ARBOLpy
 python implementation of the R package ARBOL, scRNAseq iterative tiered clustering
 
@@ -73,3 +90,5 @@ based on the heterogeneity of your data.
 ## Returns
 
 * anytree object based on iterative tiered clustering
+
+
