@@ -63,18 +63,18 @@ take >30 minutes. Running on 100k+ cells could take >3 hours.
 
 **Note** It has been tested up to 200k cells, and beyond 10k cells, maintains a linear relationship between resource usage and number of cells
 
-**Python ARBOL resource usage**:
-	Pearson residuals normalization:
- 	- 1.2 GB RAM per 1000 cells
- 	- 2 minutes per 1000 cells
- 	TPM normalization:
- 	- 1.2 GB RAM per 1000 cells
+**Python ARBOL resource usage**:  
+	Pearson residuals normalization:  
+ 	- 1.2 GB RAM per 1000 cells  
+ 	- 2 minutes per 1000 cells  
+ 	TPM normalization:  
+ 	- 1.2 GB RAM per 1000 cells  
  	- 1:55 min per 1000 cells
 
-**R ARBOL resource usage**:
-	Pearson residuals normalization (SCTransform):
-	- 1.2 GB RAM per 1000 cells
-	- 4 minutes per 1000 cells
+**R ARBOL resource usage**:  
+	Pearson residuals normalization (SCTransform):  
+	- 1.2 GB RAM per 1000 cells  
+	- 4 minutes per 1000 cells  
 
  The current RAM/time bottleneck is the silhouette analysis, which runs 30 rounds of clustering at different resolutions. 
 
