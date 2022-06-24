@@ -17,13 +17,15 @@ pip install git+https://github.com/jo-m-lab/ARBOLpy.git
 from PyPI
 ```
 pip install arbolpy
+
+import ARBOL
 ```
 
 or clone the repository and source the functions directly from the script
 ```
 git clone https://github.com/jo-m-lab/ARBOLpy.git
 
-import "path/to/cloned/git/repo/ARBOLpy/ARBOL")
+import "path/to/cloned/git/repo/ARBOLpy/ARBOL"
 ```
 
 there is a docker image available with ARBOL and dependencies preinstalled
@@ -35,38 +37,45 @@ ARBOL was developed and used in the paper, "A treatment-naïve cellular atlas of
 Currently, a tutorial is only available for the R version, where the FGID atlas figure is reproduced: 
 https://jo-m-lab.github.io/ARBOL/ARBOLtutorial.html
 
+ARBOLpy is a stripped down version of ARBOL meant to perform iterative clustering with little overhead. 
+Currently it does not include the two stop conditions that the R version uses to heuristically join similar clusters.
+This results in the Python version overclustering data. Methods for merging the end clusters of the tree are available on the develop branch of the R version of ARBOL.
+
 This package is meant as a starting point for the way that we approached clustering and and is meant to be edited/customized through community feedback through users such as yourself!
 
-We have dedicated effort to choosing reasonable defaults, but there is no certainty that they are
-the best defaults for your data.
-
 The main function of ARBOLpy is ARBOL() - here is an example call. 
-The helper function write_ARBOL_output writes the anytree object's endclusters to a csv file.
 
 ```
+import scanpy as sc
+import ARBOL
+
+adata = sc.datasets.pbmc3k()
+
 tree = ARBOL.ARBOL(adata)
 
-ARBOL.write_ARBOL_output(tree)
+ARBOL.write_ARBOL_output(tree,output_csv='endclusts.csv')
 ```
 
-**Note** This script can take a long time to run. Running on 20K cells could 
-take an hour. Running on 100k+ cells could take 5 hours. This timing varies
-based on the heterogeneity of your data.
+The helper function write_ARBOL_output writes the anytree object's endclusters to a csv file.
 
-**Note** The script requires approximately 1.2 GB RAM per 1k cells, meaning on a local machine with 16GB RAM, one could reasonably run 12k cells. The current RAM/time bottleneck is the silhouette analysis, which runs 
+**Note** This script can take a long time to run. Running on 20K cells could 
+take >30 minutes. Running on 100k+ cells could take 4 hours. 
+
+**Note** The script requires approximately 1.2 GB RAM per 1k cells, meaning on a local machine with 16GB RAM, one could reasonably run 10k cells. The current RAM/time bottleneck is the silhouette analysis, which runs 30 rounds of clustering at different resolutions. 
 
 ## ARBOL() Parameters
 
 * *adata* scanpy anndata object
-* *normalization_method* normalization method, defaults to "Pearson", scanpy's experimental implementation of SCTransform
+* *normalize_method* normalization method, defaults to "Pearson", scanpy's experimental implementation of SCTransform. Also available: "TPM": as implemented in scanpy normalize_total()
 * *tier* starting tier, defaults to 0
-* *clustN* starting cluster, defaults to 0
+* *cluster* starting cluster, defaults to 0
 * *min_cluster_size* minimum number of cells to allow further clustering
 * *tree* anytree object to attach arbol to. Shouldn't be changed unless building onto a pre-existing tree.
 * *parent* parent node of current clustering event, defaults to None. As with tree, shouldn't be changed unless building onto a pre-existing anytree object
 * *max_tiers* maximum number of tiers to allow further clustering
 * *min_silhouette_res* lower bound of silhouette analysis leiden clustering resolution parameter scan 
 * *max_silhouette_res* upper bound
+* *silhouette_subsampling_n* number of cells to subsample anndata for silhouette analysis (cluster resolution choice)
 * *h5dir* where to save h5 objects for each tier and cluster, if None, does not save
 * *figdir* where to save QC and viz figures for each tier and cluster, if None does not save
 

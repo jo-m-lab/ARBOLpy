@@ -401,7 +401,7 @@ def ARBOL(adata, tier = 0, cluster = 0,
     return tree
 
 
-def write_ARBOL_output(tree):
+def write_ARBOL_output(tree, output_csv):
     for pre, fill, node in anytree.RenderTree(tree):
         print("%s%s n=%s tier=%s" % (pre, node.name, node.n, node.tier))
 
@@ -415,7 +415,7 @@ def write_ARBOL_output(tree):
         endcluster += [item.name] * len(item.cells)
     endf = pd.DataFrame(index=cells)
     endf['tier']=tier
-    endf['endcluster']=endcluster
+    endf['tierNident']=endcluster
 
-    endf.to_csv(figdir + 'endclusters.csv')
+    endf.to_csv(output_csv)
 

@@ -1,7 +1,7 @@
 LICENSE
 README.md
 pyproject.toml
-setup.cfg
+ARBOLpy/ARBOL.py
 ARBOLpy/ARBOLpy.egg-info/PKG-INFO
 ARBOLpy/ARBOLpy.egg-info/SOURCES.txt
 ARBOLpy/ARBOLpy.egg-info/dependency_links.txt
