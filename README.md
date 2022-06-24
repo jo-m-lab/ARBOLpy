@@ -59,9 +59,24 @@ ARBOL.write_ARBOL_output(tree,output_csv='endclusts.csv')
 The helper function write_ARBOL_output writes the anytree object's endclusters to a csv file.
 
 **Note** This script can take a long time to run. Running on 20K cells could 
-take >30 minutes. Running on 100k+ cells could take 4 hours. 
+take >30 minutes. Running on 100k+ cells could take >3 hours. 
 
-**Note** The script requires approximately 1.2 GB RAM per 1k cells, meaning on a local machine with 16GB RAM, one could reasonably run 10k cells. The current RAM/time bottleneck is the silhouette analysis, which runs 30 rounds of clustering at different resolutions. 
+**Note** It has been tested up to 200k cells, and beyond 10k cells, maintains a linear relationship between resource usage and number of cells
+
+**Python ARBOL resource usage**:
+	Pearson residuals normalization:
+ 	- 1.2 GB RAM per 1000 cells
+ 	- 2 minutes per 1000 cells
+ 	TPM normalization:
+ 	- 1.2 GB RAM per 1000 cells
+ 	- 1:55 min per 1000 cells
+
+**R ARBOL resource usage**:
+	Pearson residuals normalization (SCTransform):
+	- 1.2 GB RAM per 1000 cells
+	- 4 minutes per 1000 cells
+
+ The current RAM/time bottleneck is the silhouette analysis, which runs 30 rounds of clustering at different resolutions. 
 
 ## ARBOL() Parameters
 
