@@ -97,13 +97,13 @@ def silvclust_plot(scores,axis,nclusts):
     ax2.axvline(nclusts[np.argmax(scores)],linewidth=2,color='r')
     return ax2
 
-def silhouette_param_scan(adata,res_array):
+def silhouette_param_scan(adata,res_array,scan_n_res):
     tmpadata = adata.copy()
     scores=[]
     clusts = []
     used_res = []
     print('testing out different resolutions of leiden clustering')
-    for res in res_array:
+    for n,res in enumerate(res_array):
         print(f'running leiden clustering at {res} resolution')
         sc.tl.leiden(tmpadata, resolution=res)
         if len(tmpadata.obs[f'leiden'].unique()) == 1:
@@ -113,8 +113,13 @@ def silhouette_param_scan(adata,res_array):
         clusts.append(len(np.unique(tmpadata.obs[f'leiden'])))
         scores.append(silhouette_score(tmpadata.obsm['X_pca'],
                                   tmpadata.obs[f'leiden']
-                                 ))
+                                 ))    
         used_res.append(res)
+
+        max_found = np.argmax(scores)
+
+        if all(i < max_found for i in scores[n-scan_n_res:]):
+            break
     
     fig, ax = plt.subplots(1,3,figsize=(16,6))
     if len(used_res) == 0:
@@ -213,7 +218,8 @@ def ARBOL(adata, tier = 0, cluster = 0,
           silhoutte_subsampling_n=7500,
           min_silhouette_res = 0.004,
           max_silhouette_res = 3,
-          figdir = 'figs', h5dir = 'h5s'):
+          figdir = 'figs', h5dir = 'h5s',
+          scan_n_res = 3):
     
     #create save folders in case they're not there
     if os.path.isdir(h5dir) == False:
@@ -316,7 +322,7 @@ def ARBOL(adata, tier = 0, cluster = 0,
 
         #find optimum cluster resolution by silhouette analysis
         print('starting silhouette analysis')
-        bestres,fig = silhouette_param_scan(tmpadata,res_array = list(np.logspace(min_res_power, max_res_power, 30)))
+        bestres,fig = silhouette_param_scan(tmpadata,res_array = list(np.logspace(min_res_power, max_res_power, 30)),scan_n_res)
         
         print(f'best resolution by silhouette analysis: {bestres}')
 
