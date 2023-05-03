@@ -1,7 +1,0 @@
-scanpy>=1.9.0
-anytree>=2.8.0
-pandas>=1.0.5
-numpy>=1.18.5
-matplotlib>=3.5.1
-scipy>=1.4.1
-leidenalg>=0.8
