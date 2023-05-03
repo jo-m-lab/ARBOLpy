@@ -1,1 +1,1 @@
-from .ARBOLpy import *
+from . import ARBOL
