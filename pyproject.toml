@@ -5,9 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = 'ARBOLpy'
 version = '0.0.8'
-authors = [
-	{ names=['Kyle Kimler','Ruben van Esch'], email='kkimler@broadinstitute.org'}
+authors =[
+    {name = 'Kyle Kimler', email='kkimler@broadinstitute.org'}, 
+    {name = 'Ruben van Esch'}
 ]
+
 description = 'python implementation of ARBOL scRNAseq iterative tiered clustering\nhttps://github.com/jo-m-lab/ARBOL'
 readme= 'README.md'
 
