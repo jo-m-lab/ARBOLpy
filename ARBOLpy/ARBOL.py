@@ -322,7 +322,7 @@ def ARBOL(adata, tier = 0, cluster = 0,
 
         #find optimum cluster resolution by silhouette analysis
         print('starting silhouette analysis')
-        bestres,fig = silhouette_param_scan(tmpadata,res_array = list(np.logspace(min_res_power, max_res_power, 30)),scan_n_res)
+        bestres,fig = silhouette_param_scan(tmpadata,res_array = list(np.logspace(min_res_power, max_res_power, 30)),scan_n_res=scan_n_res)
         
         print(f'best resolution by silhouette analysis: {bestres}')
 
