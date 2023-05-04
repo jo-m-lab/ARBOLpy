@@ -1,1 +1,1 @@
-from ARBOL import *
+from .ARBOL import *
