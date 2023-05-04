@@ -27,7 +27,7 @@ setup(
     project_urls={
         "Bug Tracker": 'https://github.com/jo-m-lab/ARBOLpy/issues', 
         "Source code": 'https://github.com/jo-m-lab/ARBOLpy'
-    }
+    },
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
