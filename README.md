@@ -18,7 +18,7 @@ from PyPI
 ```
 pip install arbolpy
 
-import ARBOL
+import ARBOLpy
 ```
 
 or clone the repository and source the functions directly from the script
@@ -47,7 +47,7 @@ The main function of ARBOLpy is ARBOL() - here is an example call.
 
 ```
 import scanpy as sc
-import ARBOL
+import ARBOLpy
 
 adata = sc.datasets.pbmc3k()
 
