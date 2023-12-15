@@ -425,3 +425,105 @@ def write_ARBOL_output(tree, output_csv):
 
     endf.to_csv(output_csv)
 
+
+def get_standard_names(adata, subtype_column, subcluster_column, n_markers, output_col='standardName'):
+    """
+    Assigns standard names to cells in an AnnData object based on subtypes and markers.
+
+    Parameters:
+    - adata (AnnData): The single-cell RNA-seq AnnData object to process.
+    - subtype_column (str): The column in adata.obs that contains cell subtype annotations.
+    - subcluster_column (str): The column in adata.obs used for subcluster identification.
+    - n_markers (int): The number of top markers to include in the standard name.
+    - output_col (str): The name of the output column for the standard names. Defaults to 'standardName'.
+
+    Returns:
+    - AnnData: The modified AnnData object with an additional column for standard names.
+    """
+
+    def process_subtype(subtype, adata):
+        """
+        Processes each cell subtype to identify top markers using rank_genes_groups.
+
+        Parameters:
+        - subtype (str): The current cell subtype being processed.
+        - adata (AnnData): The single-cell RNA-seq AnnData object.
+
+        Returns:
+        - tuple: A tuple containing the subtype and a dictionary of markers for each subcluster.
+        """
+
+        # Suppress performance warnings related to DataFrame fragmentation
+        warnings.filterwarnings('ignore')
+
+        print(f"\nProcessing subtype: {subtype}")
+
+        # Determine the number of unique subclusters for the current subtype
+        unique_subclusters = adata[adata.obs[subtype_column] == subtype].obs[subcluster_column].nunique()
+        print(f"Unique subclusters for {subtype}: {unique_subclusters}")
+
+        try:
+            if unique_subclusters == 1:
+                # When there's only one subcluster, use the entire dataset to identify markers
+                temp_adata = adata.copy()
+                sc.tl.rank_genes_groups(temp_adata, groupby=subcluster_column, reference='rest', method='t-test')
+                res = temp_adata.uns['rank_genes_groups'].copy()
+                single_subcluster_name = list(res['names'].dtype.names)[0]  # Name of the single subcluster
+                markers = {single_subcluster_name: res['names'][single_subcluster_name][:n_markers].tolist()}
+            else:
+                # For multiple subclusters, filter data by current subtype
+                temp_adata = adata[adata.obs[subtype_column] == subtype].copy()
+                sc.tl.rank_genes_groups(temp_adata, groupby=subcluster_column, reference='rest', method='t-test')
+                res = temp_adata.uns['rank_genes_groups'].copy()
+                markers = {subcluster: res['names'][subcluster][:n_markers].tolist() 
+                           for subcluster in res['names'].dtype.names}
+        except ZeroDivisionError:
+            print(f"Error: Division by zero occurred for subtype {subtype}")
+            return subtype, {}
+
+        print(f"temp_adata shape for {subtype}: {temp_adata.shape}")
+        if temp_adata.shape[0] == 0 or temp_adata.X.count_nonzero() == 0:
+            print(f"Warning: No valid data for subtype {subtype}")
+            return subtype, {}
+
+#         print(f"Markers for {subtype}: {markers}")
+        return subtype, markers
+
+    # Process each subtype in the dataset and collect results
+    results = []
+    for subtype in adata.obs[subtype_column].unique():
+        result = process_subtype(subtype, adata)
+        results.append(result)
+
+    # Create a mapping from each subtype to its corresponding subclusters and markers
+    subtype_subcluster_markers = {subtype: markers for subtype, markers in results}
+#     print(f"\nsubtype_subcluster_markers: {subtype_subcluster_markers}")
+
+    # Map each subcluster to its associated subtype
+    tierNident_to_subtype = {}
+    for subtype, subcluster_dict in subtype_subcluster_markers.items():
+        for subcluster in subcluster_dict.keys():
+            tierNident_to_subtype[subcluster] = subtype
+#     print(f"\ntierNident_to_subtype mapping: {tierNident_to_subtype}")
+
+    def get_subtype_markers(subcluster):
+        """
+        Generates a standard name for each cell based on its subcluster and corresponding subtype markers.
+
+        Parameters:
+        - subcluster (str): The subcluster identifier of the cell.
+
+        Returns:
+        - str: The standard name for the cell.
+        """
+        subtype = tierNident_to_subtype.get(subcluster, "Unknown")
+        markers = subtype_subcluster_markers.get(subtype, {}).get(subcluster, [])
+        standard_name = f"{subtype}." + ".".join(markers) if markers else f"{subtype}.No_Markers_Found"
+        print(f"Standard name for {subcluster}: {standard_name}")
+        return standard_name
+
+    # Apply the standard naming function to create a new column in the AnnData object
+    adata.obs[output_col] = adata.obs[subcluster_column].apply(get_subtype_markers)
+
+    return adata
+
